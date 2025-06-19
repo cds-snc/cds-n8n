@@ -61,6 +61,10 @@ locals {
       "value" = "false"
     },
     {
+      "name"  = "NO_COLOR",
+      "value" = "true"
+    },
+    {
       "name"  = "NODE_ENV"
       "value" = "production"
     },

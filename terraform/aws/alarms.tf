@@ -7,6 +7,7 @@ locals {
     "exception",
   ]
   n8n_error_skip = [
+    "Last session crashed",
     "Troubleshooting URL",
   ]
   n8n_error_metric_pattern = "[(w1=\"*${join("*\" || w1=\"*", local.n8n_error_filters)}*\") && w1!=\"*${join("*\" && w1!=\"*", local.n8n_error_skip)}*\"]"
