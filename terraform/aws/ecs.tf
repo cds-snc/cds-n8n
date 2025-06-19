@@ -60,12 +60,12 @@ locals {
 module "n8n_ecs" {
   source = "github.com/cds-snc/terraform-modules//ecs?ref=v10.5.2"
 
+  cluster_capacity_provider = "FARGATE_SPOT"
   cluster_name              = "n8n"
   service_name              = "n8n"
+  cpu_architecture          = "ARM64"
   task_cpu                  = 1024
   task_memory               = 2048
-  cluster_capacity_provider = "FARGATE_SPOT"
-  cpu_architecture          = "arm64"
 
   service_use_latest_task_def = true
   enable_autoscaling          = false
