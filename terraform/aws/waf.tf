@@ -169,7 +169,7 @@ resource "aws_wafv2_web_acl" "n8n" {
 
     statement {
       rate_based_statement {
-        limit              = 5
+        limit              = 10
         aggregate_key_type = "IP"
         scope_down_statement {
           and_statement {
