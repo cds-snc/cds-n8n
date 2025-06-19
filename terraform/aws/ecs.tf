@@ -153,19 +153,3 @@ resource "aws_ssm_parameter" "n8n_encryption_key" {
   value = var.n8n_encryption_key
   tags  = local.common_tags
 }
-
-#
-# Shutdown during off hours
-#
-module "ecs_shutdown" {
-  source = "github.com/cds-snc/terraform-modules//schedule_shutdown?ref=v10.5.2"
-
-  ecs_service_arns = [
-    "arn:aws:ecs:${var.region}:${var.account_id}:service/${module.n8n_ecs.cluster_name}/${module.n8n_ecs.service_name}"
-  ]
-
-  schedule_shutdown = "cron(0 22 * * ? *)"       # 10pm UTC, every day
-  schedule_startup  = "cron(0 12 ? * MON-FRI *)" # 12pm UTC, Monday-Friday
-
-  billing_tag_value = var.billing_code
-}
