@@ -1,10 +1,3 @@
-# Generic Project Template
+# CDS n8n
 
-This repository provides some base files for setting up a repository at
-CDS. Plan is to create more project template for specific technologies:
-
-- project-template-terraform
-- project-template-python
-- project-template-nodejs
-
-Note that default community health files are maintained at https://github.com/cds-snc/.github 
+Terraform to setup and run a CDS instance of [n8n workflow automation](https://n8n.io/).
