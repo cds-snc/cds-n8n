@@ -1,3 +1,8 @@
+variable "cbs_satellite_bucket_name" {
+  description = "The name of the CBS Satellite bucket for storing logs."
+  type        = string
+}
+
 variable "domain" {
   description = "The domain name for n8n."
   type        = string

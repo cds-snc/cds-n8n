@@ -6,6 +6,12 @@ resource "aws_lb" "n8n" {
   drop_invalid_header_fields = true
   enable_deletion_protection = true
 
+  access_logs {
+    bucket  = var.cbs_satellite_bucket_name
+    prefix  = "lb_logs"
+    enabled = true
+  }
+
   security_groups = [
     aws_security_group.n8n_lb.id
   ]

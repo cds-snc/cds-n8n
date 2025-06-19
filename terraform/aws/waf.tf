@@ -104,106 +104,8 @@ resource "aws_wafv2_web_acl" "n8n" {
   }
 
   rule {
-    name     = "RateLimitersRuleGroup"
+    name     = "RateLimitAllRequests"
     priority = 20
-
-    override_action {
-      none {}
-    }
-
-    statement {
-      rule_group_reference_statement {
-        arn = aws_wafv2_rule_group.rate_limiters_group.arn
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "rate_limiters_rule_group"
-      sampled_requests_enabled   = false
-    }
-  }
-
-  rule {
-    name     = "AWSManagedRulesKnownBadInputsRuleSet"
-    priority = 30
-    override_action {
-      none {}
-    }
-
-    statement {
-      managed_rule_group_statement {
-        name        = "AWSManagedRulesKnownBadInputsRuleSet"
-        vendor_name = "AWS"
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "AWSManagedRulesKnownBadInputsRuleSet"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  rule {
-    name     = "AWSManagedRulesLinuxRuleSet"
-    priority = 40
-    override_action {
-      none {}
-    }
-    statement {
-      managed_rule_group_statement {
-        name        = "AWSManagedRulesLinuxRuleSet"
-        vendor_name = "AWS"
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "AWSManagedRulesLinuxRuleSet"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  rule {
-    name     = "AWSManagedRulesCommonRuleSet"
-    priority = 50
-
-    override_action {
-      none {}
-    }
-
-    statement {
-      managed_rule_group_statement {
-        name        = "AWSManagedRulesCommonRuleSet"
-        vendor_name = "AWS"
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "AWSManagedRulesCommonRuleSet"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  visibility_config {
-    cloudwatch_metrics_enabled = true
-    metric_name                = "n8n"
-    sampled_requests_enabled   = true
-  }
-
-  tags = local.common_tags
-}
-
-resource "aws_wafv2_rule_group" "rate_limiters_group" {
-  capacity = 64
-  name     = "RateLimitersGroup"
-  scope    = "REGIONAL"
-
-  rule {
-    name     = "BlanketRequestLimit"
-    priority = 1
 
     action {
       block {}
@@ -211,22 +113,21 @@ resource "aws_wafv2_rule_group" "rate_limiters_group" {
 
     statement {
       rate_based_statement {
-        limit              = 2000
+        limit              = 1000
         aggregate_key_type = "IP"
-
       }
     }
 
     visibility_config {
       cloudwatch_metrics_enabled = true
-      metric_name                = "BlanketRequestLimit"
+      metric_name                = "RateLimitAllRequests"
       sampled_requests_enabled   = true
     }
   }
 
   rule {
-    name     = "PostRequestLimit"
-    priority = 2
+    name     = "RateLimitMutatingRequests"
+    priority = 30
 
     action {
       block {}
@@ -241,7 +142,7 @@ resource "aws_wafv2_rule_group" "rate_limiters_group" {
             field_to_match {
               method {}
             }
-            regex_string = "^(put|post)$"
+            regex_string = "^(delete|patch|post|put)$"
             text_transformation {
               priority = 1
               type     = "LOWERCASE"
@@ -253,14 +154,14 @@ resource "aws_wafv2_rule_group" "rate_limiters_group" {
 
     visibility_config {
       cloudwatch_metrics_enabled = true
-      metric_name                = "PostRequestRateLimit"
+      metric_name                = "RateLimitMutatingRequests"
       sampled_requests_enabled   = true
     }
   }
 
   rule {
-    name     = "LoginLimit"
-    priority = 3
+    name     = "RateLimitLogin"
+    priority = 40
 
     action {
       block {}
@@ -268,7 +169,7 @@ resource "aws_wafv2_rule_group" "rate_limiters_group" {
 
     statement {
       rate_based_statement {
-        limit              = 10
+        limit              = 5
         aggregate_key_type = "IP"
         scope_down_statement {
           and_statement {
@@ -303,15 +204,78 @@ resource "aws_wafv2_rule_group" "rate_limiters_group" {
 
     visibility_config {
       cloudwatch_metrics_enabled = true
-      metric_name                = "PostRequestRateLimit"
+      metric_name                = "RateLimitLogin"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    name     = "AWSManagedRulesKnownBadInputsRuleSet"
+    priority = 50
+    override_action {
+      none {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesKnownBadInputsRuleSet"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWSManagedRulesKnownBadInputsRuleSet"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    name     = "AWSManagedRulesLinuxRuleSet"
+    priority = 60
+    override_action {
+      none {}
+    }
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesLinuxRuleSet"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWSManagedRulesLinuxRuleSet"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    name     = "AWSManagedRulesCommonRuleSet"
+    priority = 70
+
+    override_action {
+      none {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesCommonRuleSet"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWSManagedRulesCommonRuleSet"
       sampled_requests_enabled   = true
     }
   }
 
   visibility_config {
     cloudwatch_metrics_enabled = true
-    metric_name                = "RateLimitersGroup"
-    sampled_requests_enabled   = false
+    metric_name                = "n8n"
+    sampled_requests_enabled   = true
   }
 
   tags = local.common_tags
@@ -320,4 +284,105 @@ resource "aws_wafv2_rule_group" "rate_limiters_group" {
 resource "aws_wafv2_web_acl_association" "n8n" {
   resource_arn = aws_lb.n8n.arn
   web_acl_arn  = aws_wafv2_web_acl.n8n.arn
+}
+
+#
+# WAF logging
+#
+resource "aws_wafv2_web_acl_logging_configuration" "n8n_waf_logs" {
+  log_destination_configs = [aws_kinesis_firehose_delivery_stream.n8n_waf_logs.arn]
+  resource_arn            = aws_wafv2_web_acl.n8n.arn
+}
+
+resource "aws_kinesis_firehose_delivery_stream" "n8n_waf_logs" {
+  # checkov:skip=CKV_AWS_241: Encryption using CMK not required
+  name        = "aws-waf-logs-n8n"
+  destination = "extended_s3"
+
+  server_side_encryption {
+    enabled = true
+  }
+
+  extended_s3_configuration {
+    role_arn           = aws_iam_role.n8n_waf_logs.arn
+    prefix             = "waf_acl_logs/AWSLogs/${var.account_id}/"
+    bucket_arn         = local.cbs_satellite_bucket_arn
+    compression_format = "GZIP"
+  }
+}
+
+#
+# WAF logging IAM role
+#
+resource "aws_iam_role" "n8n_waf_logs" {
+  name               = "n8n-waf-logs"
+  assume_role_policy = data.aws_iam_policy_document.n8n_waf_logs_assume.json
+}
+
+resource "aws_iam_role_policy" "n8n_waf_logs" {
+  name   = "n8n-waf-logs"
+  role   = aws_iam_role.n8n_waf_logs.id
+  policy = data.aws_iam_policy_document.n8n_waf_logs.json
+}
+
+data "aws_iam_policy_document" "n8n_waf_logs_assume" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "Service"
+      identifiers = ["firehose.amazonaws.com"]
+    }
+  }
+}
+
+data "aws_iam_policy_document" "n8n_waf_logs" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:AbortMultipartUpload",
+      "s3:GetBucketLocation",
+      "s3:GetObject",
+      "s3:ListBucket",
+      "s3:ListBucketMultipartUploads",
+      "s3:PutObject"
+    ]
+    resources = [
+      local.cbs_satellite_bucket_arn,
+      "${local.cbs_satellite_bucket_arn}/*"
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "iam:CreateServiceLinkedRole"
+    ]
+    resources = [
+      "arn:aws:iam::*:role/aws-service-role/wafv2.amazonaws.com/AWSServiceRoleForWAFV2Logging"
+    ]
+  }
+}
+
+#
+# AWS Shield Advanced
+#
+resource "aws_shield_subscription" "n8n" {
+  auto_renew = "ENABLED"
+}
+
+resource "aws_shield_protection" "n8n_alb" {
+  name         = "n8n-alb"
+  resource_arn = aws_lb.n8n.arn
+  tags         = local.common_tags
+}
+
+resource "aws_shield_protection" "n8n_route53" {
+  name         = "n8n-route53"
+  resource_arn = aws_route53_zone.n8n.arn
+  tags         = local.common_tags
+}
+
+resource "aws_shield_application_layer_automatic_response" "n8n_alb" {
+  resource_arn = aws_lb.n8n.arn
+  action       = "BLOCK"
 }

@@ -4,12 +4,13 @@ locals {
 }
 
 inputs = {
-  account_id   = local.vars.inputs.account_id
-  domain       = local.vars.inputs.domain
-  env          = local.vars.inputs.env
-  product_name = local.vars.inputs.product_name
-  region       = local.vars.inputs.region
-  billing_code = local.billing_code
+  account_id                = local.vars.inputs.account_id
+  domain                    = local.vars.inputs.domain
+  env                       = local.vars.inputs.env
+  product_name              = local.vars.inputs.product_name
+  region                    = local.vars.inputs.region
+  billing_code              = local.billing_code
+  cbs_satellite_bucket_name = "cbs-satellite-${local.vars.inputs.account_id}"
 }
 
 remote_state {
