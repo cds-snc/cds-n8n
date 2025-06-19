@@ -27,5 +27,6 @@ jobs:
         with:
           scan-type: config
           scan-ref: terraform/aws
+          trivyignores: terraform/aws/.trivyignore
           exit-code: 1
           ignore-unfixed: false
