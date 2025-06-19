@@ -14,3 +14,23 @@ resource "aws_route53_record" "n8n_A" {
     evaluate_target_health = false
   }
 }
+
+#
+# Add a DNS resolver firewall to limit outbound DNS queries
+#
+module "resolver_dns" {
+  source           = "github.com/cds-snc/terraform-modules//resolver_dns?ref=v10.5.2"
+  vpc_id           = module.vpc.vpc_id
+  firewall_enabled = true
+
+  allowed_domains = [
+    "*.amazonaws.com.",      # AWS
+    "*.azure.com.",          # Azure OpenAI
+    "*.azure-api.net.",      # Azure OpenAI
+    "*.microsoft.com.",      # Azure OpenAI
+    "*.trafficmanager.net.", # Azure OpenAI
+    "tiktoken.pages.dev.",   # OpenAI token counting
+  ]
+
+  billing_tag_value = var.billing_code
+}
