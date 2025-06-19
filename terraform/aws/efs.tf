@@ -57,10 +57,10 @@ resource "aws_efs_backup_policy" "n8n" {
 }
 
 resource "aws_efs_mount_target" "n8n" {
-  for_each = toset(module.vpc.private_subnet_ids)
+  count = local.availability_zone_count
 
   file_system_id = aws_efs_file_system.n8n.id
-  subnet_id      = each.value
+  subnet_id      = element(module.vpc.private_subnet_ids, count.index)
   security_groups = [
     aws_security_group.n8n_efs.id
   ]

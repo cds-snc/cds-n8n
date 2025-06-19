@@ -3,7 +3,7 @@ module "vpc" {
   name   = "n8n-${var.env}"
 
   enable_flow_log                  = true
-  availability_zones               = 2
+  availability_zones               = local.availability_zone_count
   cidrsubnet_newbits               = 8
   single_nat_gateway               = true
   allow_https_request_out          = true
