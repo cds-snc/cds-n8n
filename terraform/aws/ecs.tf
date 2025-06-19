@@ -1,6 +1,18 @@
 locals {
   container_env = [
     {
+      "name"  = "EXTERNAL_FRONTEND_HOOKS_URLS",
+      "value" = ""
+    },
+    {
+      "name"  = "N8N_DIAGNOSTICS_CONFIG_FRONTEND"
+      "value" = ""
+    },
+    {
+      "name"  = "N8N_DIAGNOSTICS_CONFIG_BACKEND"
+      "value" = ""
+    },
+    {
       "name"  = "N8N_DIAGNOSTICS_ENABLED"
       "value" = "false"
     },
@@ -19,6 +31,10 @@ locals {
     {
       "name"  = "N8N_HOST"
       "value" = var.domain
+    },
+    {
+      "name"  = "N8N_LOG_LEVEL"
+      "value" = "debug"
     },
     {
       "name"  = "N8N_PERSONALIZATION_ENABLED"
@@ -41,8 +57,20 @@ locals {
       "value" = "true"
     },
     {
+      "name"  = "N8N_TEMPLATES_ENABLED"
+      "value" = "false"
+    },
+    {
       "name"  = "NODE_ENV"
       "value" = "production"
+    },
+    {
+      "name"  = "QUEUE_HEALTH_CHECK_ACTIVE"
+      "value" = "true"
+    },
+    {
+      "name"  = "N8N_VERSION_CHECK_ENABLED"
+      "value" = "false"
     },
     {
       "name"  = "WEBHOOK_URL"
