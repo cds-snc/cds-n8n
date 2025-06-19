@@ -24,8 +24,12 @@ module "resolver_dns" {
   firewall_enabled = true
 
   allowed_domains = [
-    "*.amazonaws.com.",
-    "*.azure.com.",
+    "*.amazonaws.com.",      # AWS
+    "*.azure.com.",          # Azure OpenAI
+    "*.azure-api.net.",      # Azure OpenAI
+    "*.microsoft.com.",      # Azure OpenAI
+    "*.trafficmanager.net.", # Azure OpenAI
+    "tiktoken.pages.dev.",   # OpenAI token counting
   ]
 
   billing_tag_value = var.billing_code
