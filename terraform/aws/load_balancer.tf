@@ -37,8 +37,8 @@ resource "aws_lb_target_group" "n8n" {
   health_check {
     enabled  = true
     protocol = "HTTP"
-    path     = "/"
-    matcher  = "200-399"
+    path     = "/healthz/readiness"
+    matcher  = "200"
   }
 
   stickiness {

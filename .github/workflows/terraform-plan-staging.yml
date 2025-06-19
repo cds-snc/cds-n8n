@@ -2,10 +2,10 @@ name: Terraform Plan Staging
 on:
   pull_request:
     paths:
-      - "terragrunt/aws/**"
-      - "terragrunt/env/staging/**"
-      - "terragrunt/env/common/**"
-      - "terragrunt/env/root.hcl"
+      - "terraform/aws/**"
+      - "terraform/env/staging/**"
+      - "terraform/env/common/**"
+      - "terraform/env/root.hcl"
       - ".github/workflows/terraform-plan-staging.yml"
 
 env:

@@ -1,0 +1,32 @@
+name: Terraform Security Scan
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "terraform/**"
+      - ".github/workflows/terraform-security-scan.yml"
+  pull_request:
+    paths:
+      - "terraform/**"
+      - ".github/workflows/terraform-security-scan.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  terraform-security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Trivy Terraform Security Scan
+        uses: aquasecurity/trivy-action@76071ef0d7ec797419534a183b498b4d6366cf37 # v0.31.0
+        with:
+          scan-type: config
+          scan-ref: terraform/aws
+          trivyignores: terraform/aws/.trivyignore
+          exit-code: 1
+          ignore-unfixed: false
