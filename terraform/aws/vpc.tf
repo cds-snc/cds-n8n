@@ -27,6 +27,7 @@ resource "aws_security_group" "n8n_ecs" {
 }
 
 resource "aws_security_group_rule" "n8n_ecs_egress_all" {
+  description       = "Allow all outbound traffic from n8n ECS tasks"
   type              = "egress"
   protocol          = "-1"
   to_port           = 0
