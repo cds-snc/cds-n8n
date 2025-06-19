@@ -6,7 +6,10 @@ locals {
     "Exception",
     "exception",
   ]
-  n8n_error_metric_pattern = "[(w1=\"*${join("*\" || w1=\"*", local.n8n_error_filters)}*\")]"
+  n8n_error_skip = [
+    "Troubleshooting URL",
+  ]
+  n8n_error_metric_pattern = "[(w1=\"*${join("*\" || w1=\"*", local.n8n_error_filters)}*\") && w1!=\"*${join("*\" && w1!=\"*", local.n8n_error_skip)}*\"]"
 }
 
 #
