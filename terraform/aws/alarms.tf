@@ -7,6 +7,7 @@ locals {
     "exception",
   ]
   n8n_error_skip = [
+    "ENOTFOUND api.n8n.io",
     "Last session crashed",
     "Troubleshooting URL",
   ]
