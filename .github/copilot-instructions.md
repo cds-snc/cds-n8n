@@ -1,6 +1,6 @@
 This project manages the AWS infrastructure for the n8n automation workflow service.
 
-Respond to prompts concisely.  Only provide 1 sentence explanations at each stage including when the task is complete.
+Respond to prompts concisely.  For each stage, including task completion, provide a simple explanation as a bullet point.
 
 When writing Terraform use the latest available AWS v6 provider documentation as a reference: https://registry.terraform.io/providers/hashicorp/aws/latest/docs
 
