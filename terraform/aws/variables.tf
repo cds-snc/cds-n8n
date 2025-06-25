@@ -50,3 +50,15 @@ variable "product_name" {
   description = "(Required) The name of the product you are deploying."
   type        = string
 }
+
+variable "vector_db_username" {
+  description = "Username for the Vector database."
+  type        = string
+  sensitive   = true
+}
+
+variable "vector_db_password" {
+  description = "Password for the Vector database."
+  type        = string
+  sensitive   = true
+}

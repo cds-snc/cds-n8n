@@ -17,6 +17,8 @@ env:
   TERRAGRUNT_VERSION: 0.81.7
   TF_VAR_cloudwatch_alert_slack_webhook: ${{ secrets.STAGING_CLOUDWATCH_ALERT_SLACK_WEBHOOK }}
   TF_VAR_n8n_encryption_key: ${{ secrets.STAGING_N8N_ENCRYPTION_KEY }}
+  TF_VAR_vector_db_username: ${{ secrets.STAGING_VECTOR_DB_USERNAME }}
+  TF_VAR_vector_db_password: ${{ secrets.STAGING_VECTOR_DB_PASSWORD }}
 
 permissions:
   id-token: write
