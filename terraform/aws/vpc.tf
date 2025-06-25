@@ -36,6 +36,16 @@ resource "aws_security_group_rule" "n8n_ecs_egress_all" {
   security_group_id = aws_security_group.n8n_ecs.id
 }
 
+resource "aws_security_group_rule" "n8n_ecs_egress_rds" {
+  description              = "Allow PostgreSQL traffic from n8n ECS tasks to RDS"
+  type                     = "egress"
+  protocol                 = "tcp"
+  from_port                = 5432
+  to_port                  = 5432
+  source_security_group_id = aws_security_group.vector_db.id
+  security_group_id        = aws_security_group.n8n_ecs.id
+}
+
 resource "aws_security_group_rule" "n8n_ecs_ingress_lb" {
   description              = "Ingress from load balancer to n8n ECS task"
   type                     = "ingress"
@@ -89,5 +99,23 @@ resource "aws_security_group_rule" "n8n_efs_ingress_ecs" {
   to_port                  = 2049
   protocol                 = "tcp"
   security_group_id        = aws_security_group.n8n_efs.id
+  source_security_group_id = aws_security_group.n8n_ecs.id
+}
+
+# Database
+resource "aws_security_group" "vector_db" {
+  name        = "vector_db"
+  description = "NSG for Vector database"
+  vpc_id      = module.vpc.vpc_id
+  tags        = local.common_tags
+}
+
+resource "aws_security_group_rule" "vector_db_ingress_ecs" {
+  description              = "Ingress from n8n ECS task to database"
+  type                     = "ingress"
+  from_port                = 5432
+  to_port                  = 5432
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.vector_db.id
   source_security_group_id = aws_security_group.n8n_ecs.id
 }
