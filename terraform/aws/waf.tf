@@ -1,6 +1,10 @@
 #
 # Load balancer WAF ACL
 #
+locals {
+  excluded_common_rules = ["CrossSiteScripting_BODY", "SizeRestrictions_BODY"]
+}
+
 resource "aws_wafv2_web_acl" "n8n" {
   name  = "n8n_lb"
   scope = "REGIONAL"
@@ -262,12 +266,66 @@ resource "aws_wafv2_web_acl" "n8n" {
       managed_rule_group_statement {
         name        = "AWSManagedRulesCommonRuleSet"
         vendor_name = "AWS"
+
+        dynamic "rule_action_override" {
+          for_each = local.excluded_common_rules
+          content {
+            name = rule_action_override.value
+            action_to_use {
+              count {}
+            }
+          }
+        }
       }
     }
 
     visibility_config {
       cloudwatch_metrics_enabled = true
       metric_name                = "AWSManagedRulesCommonRuleSet"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  # Label match rule
+  # Blocks requests that trigger `AWSManagedRulesCommonRuleSet#CrossSiteScripting_BODY` except those performing a partion workflow execution
+  rule {
+    name     = "WorkflowPartialExecutions"
+    priority = 80
+
+    action {
+      block {}
+    }
+
+    statement {
+      and_statement {
+        statement {
+          label_match_statement {
+            scope = "LABEL"
+            key   = "awswaf:managed:aws:core-rule-set:CrossSiteScripting_Body"
+          }
+        }
+        statement {
+          not_statement {
+            statement {
+              regex_pattern_set_reference_statement {
+                field_to_match {
+                  uri_path {}
+                }
+                arn = aws_wafv2_regex_pattern_set.workflow_partial_execution_paths.arn
+                text_transformation {
+                  type     = "LOWERCASE"
+                  priority = 0
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "WorkflowPartialExecutions"
       sampled_requests_enabled   = true
     }
   }
@@ -279,6 +337,16 @@ resource "aws_wafv2_web_acl" "n8n" {
   }
 
   tags = local.common_tags
+}
+
+resource "aws_wafv2_regex_pattern_set" "workflow_partial_execution_paths" {
+  name        = "workflow_partial_execution_paths"
+  description = "Paths that are related to partition workflow execution"
+  scope       = "REGIONAL"
+
+  regular_expression {
+    regex_string = "^/rest/workflows/[a-zA-Z0-9]+/run.partial.*$"
+  }
 }
 
 resource "aws_wafv2_web_acl_association" "n8n" {
