@@ -118,7 +118,13 @@ resource "aws_wafv2_web_acl" "n8n" {
     statement {
       rate_based_statement {
         limit              = 1000
-        aggregate_key_type = "IP"
+        aggregate_key_type = "CUSTOM_KEYS"
+
+        custom_key {
+          ja4_fingerprint {
+            fallback_behavior = "MATCH"
+          }
+        }
       }
     }
 
@@ -140,7 +146,14 @@ resource "aws_wafv2_web_acl" "n8n" {
     statement {
       rate_based_statement {
         limit              = 200
-        aggregate_key_type = "IP"
+        aggregate_key_type = "CUSTOM_KEYS"
+
+        custom_key {
+          ja4_fingerprint {
+            fallback_behavior = "MATCH"
+          }
+        }
+
         scope_down_statement {
           regex_match_statement {
             field_to_match {
@@ -174,7 +187,14 @@ resource "aws_wafv2_web_acl" "n8n" {
     statement {
       rate_based_statement {
         limit              = 10
-        aggregate_key_type = "IP"
+        aggregate_key_type = "CUSTOM_KEYS"
+
+        custom_key {
+          ja4_fingerprint {
+            fallback_behavior = "MATCH"
+          }
+        }
+
         scope_down_statement {
           and_statement {
             statement {
