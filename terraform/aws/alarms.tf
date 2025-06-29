@@ -1,15 +1,18 @@
 locals {
   n8n_error_filters = [
-    "ERROR",
-    "Error",
     "error",
-    "Exception",
-    "exception",
   ]
   n8n_error_skip = [
     "ENOTFOUND api.n8n.io",
+    "Invalid URL",
     "Last session crashed",
+    "Node does not have any credentials set",
+    "Received request for unknown webhook",
+    "Running node * finished with error",
+    "The workflow has issues",
+    "This will become an error in a future version of the SDK",
     "Troubleshooting URL",
+    "Workflow execution finished with error",
   ]
   n8n_error_metric_pattern = "[(w1=\"*${join("*\" || w1=\"*", local.n8n_error_filters)}*\") && w1!=\"*${join("*\" && w1!=\"*", local.n8n_error_skip)}*\"]"
 }
@@ -187,6 +190,7 @@ resource "aws_cloudwatch_query_definition" "n8n_ecs_errors" {
   query_string = <<-QUERY
     fields @timestamp, @message, @logStream
     | filter @message like /${join("|", local.n8n_error_filters)}/
+    | filter @message not like /${join("|", local.n8n_error_skip)}/
     | sort @timestamp desc
     | limit 100
   QUERY

@@ -24,16 +24,20 @@ module "resolver_dns" {
   firewall_enabled = true
 
   allowed_domains = [
-    "*.amazonaws.com.",      # AWS
-    "*.azure.com.",          # Azure OpenAI
-    "*.azure-api.net.",      # Azure OpenAI
-    "*.canada.ca.",          # Government of Canada
-    "*.cds-snc.ca.",         # Government of Canada
-    "*.cdssandbox.xyz.",     # Government of Canada
-    "*.gc.ca.",              # Government of Canada
-    "*.microsoft.com.",      # Azure OpenAI
-    "*.trafficmanager.net.", # Azure OpenAI
-    "tiktoken.pages.dev.",   # OpenAI token counting
+    "*.amazonaws.com.",         # AWS
+    "*.azure.com.",             # Azure OpenAI
+    "*.azure-api.net.",         # Azure OpenAI
+    "canada.ca.",               # Government of Canada
+    "*.canada.ca.",             # Government of Canada
+    "*.cds-snc.ca.",            # Government of Canada
+    "*.cdssandbox.xyz.",        # Government of Canada
+    "*.gc.ca.",                 # Government of Canada
+    "github.com.",              # GitHub
+    "*.github.com.",            # GitHub
+    "*.githubusercontent.com.", # GitHub
+    "*.microsoft.com.",         # Azure OpenAI
+    "*.trafficmanager.net.",    # Azure OpenAI
+    "tiktoken.pages.dev.",      # OpenAI token counting
   ]
 
   billing_tag_value = var.billing_code
