@@ -30,6 +30,11 @@ variable "env" {
   type        = string
 }
 
+variable "model_container_image" {
+  description = "Model's Docker image and tag."
+  type        = string
+}
+
 variable "region" {
   description = "AWS region."
   type        = string

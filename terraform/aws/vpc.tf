@@ -18,7 +18,7 @@ module "vpc" {
 # Security groups
 #
 
-# ECS
+# ECS n8n
 resource "aws_security_group" "n8n_ecs" {
   description = "NSG for n8n ECS Tasks"
   name        = "n8n_ecs"
@@ -46,6 +46,16 @@ resource "aws_security_group_rule" "n8n_ecs_egress_rds" {
   security_group_id        = aws_security_group.n8n_ecs.id
 }
 
+resource "aws_security_group_rule" "n8n_ecs_egress_model" {
+  description              = "Egress from n8n to model ECS task"
+  type                     = "egress"
+  from_port                = 11434
+  to_port                  = 11434
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.n8n_ecs.id
+  source_security_group_id = aws_security_group.model_ecs.id
+}
+
 resource "aws_security_group_rule" "n8n_ecs_ingress_lb" {
   description              = "Ingress from load balancer to n8n ECS task"
   type                     = "ingress"
@@ -54,6 +64,24 @@ resource "aws_security_group_rule" "n8n_ecs_ingress_lb" {
   protocol                 = "tcp"
   security_group_id        = aws_security_group.n8n_ecs.id
   source_security_group_id = aws_security_group.n8n_lb.id
+}
+
+# ECS model
+resource "aws_security_group" "model_ecs" {
+  description = "NSG for model ECS Tasks"
+  name        = "model_ecs"
+  vpc_id      = module.vpc.vpc_id
+  tags        = local.common_tags
+}
+
+resource "aws_security_group_rule" "model_ecs_ingress_n8n" {
+  description              = "Ingress from n8n to model ECS task"
+  type                     = "ingress"
+  from_port                = 11434
+  to_port                  = 11434
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.model_ecs.id
+  source_security_group_id = aws_security_group.n8n_ecs.id
 }
 
 # Load balancer

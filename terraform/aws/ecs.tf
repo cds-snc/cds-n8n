@@ -1,5 +1,5 @@
 locals {
-  container_env = [
+  container_env_n8n = [
     {
       "name"  = "EXTERNAL_FRONTEND_HOOKS_URLS",
       "value" = ""
@@ -81,7 +81,13 @@ locals {
       "value" = "https://${var.domain}/"
     }
   ]
-  container_secrets = [
+  container_env_model = [
+    {
+      "name"  = "OLLAMA_HOST"
+      "value" = "0.0.0.0"
+    }
+  ]
+  container_secrets_n8n = [
     {
       "name"      = "N8N_ENCRYPTION_KEY"
       "valueFrom" = aws_ssm_parameter.n8n_encryption_key.arn
@@ -99,15 +105,17 @@ module "n8n_ecs" {
   task_cpu                  = 1024
   task_memory               = 2048
 
-  service_use_latest_task_def = true
-  enable_autoscaling          = false
+  service_discovery_namespace_id = aws_service_discovery_private_dns_namespace.n8n.id
+  service_discovery_enabled      = true
+  service_use_latest_task_def    = true
+  enable_autoscaling             = false
 
   # Task definition
   container_image                     = var.n8n_container_image
   container_host_port                 = 5678
   container_port                      = 5678
-  container_environment               = local.container_env
-  container_secrets                   = local.container_secrets
+  container_environment               = local.container_env_n8n
+  container_secrets                   = local.container_secrets_n8n
   container_read_only_root_filesystem = false
 
   task_exec_role_policy_documents = [
@@ -145,9 +153,66 @@ module "n8n_ecs" {
   billing_tag_value = var.billing_code
 }
 
+module "model_ecs" {
+  source = "github.com/cds-snc/terraform-modules//ecs?ref=v10.5.2"
+
+  create_cluster   = false
+  cluster_name     = "n8n"
+  service_name     = "model"
+  cpu_architecture = "ARM64"
+  task_cpu         = 4096
+  task_memory      = 16384
+
+  service_discovery_namespace_id = aws_service_discovery_private_dns_namespace.n8n.id
+  service_discovery_enabled      = true
+  service_use_latest_task_def    = true
+  enable_autoscaling             = false
+  enable_execute_command         = true
+
+  task_role_policy_documents = [
+    data.aws_iam_policy_document.ecs_task_create_tunnel.json
+  ]
+
+  # Task definition
+  container_image                     = var.model_container_image
+  container_host_port                 = 11434
+  container_port                      = 11434
+  container_environment               = local.container_env_model
+  container_read_only_root_filesystem = false
+
+  # Networking
+  subnet_ids         = module.vpc.private_subnet_ids
+  security_group_ids = [aws_security_group.model_ecs.id]
+
+  billing_tag_value = var.billing_code
+}
+
+#
+# Service discovery namespace
+#
+resource "aws_service_discovery_private_dns_namespace" "n8n" {
+  name        = "n8n.ecs.local"
+  vpc         = module.vpc.vpc_id
+  description = "Service discovery namespace for n8n"
+}
+
 #
 # IAM policies
 #
+data "aws_iam_policy_document" "ecs_task_create_tunnel" {
+  statement {
+    sid    = "CreateSSMTunnel"
+    effect = "Allow"
+    actions = [
+      "ssmmessages:CreateControlChannel",
+      "ssmmessages:CreateDataChannel",
+      "ssmmessages:OpenControlChannel",
+      "ssmmessages:OpenDataChannel"
+    ]
+    resources = ["*"]
+  }
+}
+
 data "aws_iam_policy_document" "ecs_task_ssm_parameters" {
   statement {
     sid    = "GetSSMParameters"
