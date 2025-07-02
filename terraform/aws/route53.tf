@@ -38,6 +38,9 @@ module "resolver_dns" {
     "*.microsoft.com.",         # Azure OpenAI
     "*.trafficmanager.net.",    # Azure OpenAI
     "tiktoken.pages.dev.",      # OpenAI token counting
+    "*.docker.com.",            # Docker Hub
+    "*.docker.io.",             # Docker Hub
+    "*.n8n.ecs.local.",         # Service discovery for n8n
   ]
 
   billing_tag_value = var.billing_code
