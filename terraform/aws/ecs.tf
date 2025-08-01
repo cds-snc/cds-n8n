@@ -154,6 +154,8 @@ module "n8n_ecs" {
 }
 
 module "model_ecs" {
+  count = 0 # Remove for now as the testing is complete
+
   source = "github.com/cds-snc/terraform-modules//ecs?ref=v10.6.2"
 
   create_cluster   = false
