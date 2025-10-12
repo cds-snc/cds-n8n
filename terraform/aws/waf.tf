@@ -2,7 +2,11 @@
 # Load balancer WAF ACL
 #
 locals {
-  excluded_common_rules = ["CrossSiteScripting_BODY", "SizeRestrictions_BODY"]
+  excluded_common_rules = [
+    "CrossSiteScripting_BODY", 
+    "SizeRestrictions_BODY", 
+    "SizeRestrictions_QUERYSTRING"
+  ]
 }
 
 resource "aws_wafv2_web_acl" "n8n" {

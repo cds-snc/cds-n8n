@@ -35,6 +35,8 @@ module "resolver_dns" {
     "github.com.",              # GitHub
     "*.github.com.",            # GitHub
     "*.githubusercontent.com.", # GitHub
+    "*.google.com.",            # Google
+    "*.googleapis.com.",        # Google APIs
     "*.microsoft.com.",         # Azure OpenAI
     "*.trafficmanager.net.",    # Azure OpenAI
     "tiktoken.pages.dev.",      # OpenAI token counting
