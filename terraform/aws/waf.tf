@@ -3,8 +3,8 @@
 #
 locals {
   excluded_common_rules = [
-    "CrossSiteScripting_BODY", 
-    "SizeRestrictions_BODY", 
+    "CrossSiteScripting_BODY",
+    "SizeRestrictions_BODY",
     "SizeRestrictions_QUERYSTRING"
   ]
 }
