@@ -7,6 +7,6 @@ include {
 }
 
 inputs = {
-  n8n_container_image   = "n8nio/n8n:1.115.0@sha256:37b55505854e4f9ca840672c6e94abbe35cfba5fc63c750f2b3c470ca5529af4"
-  model_container_image = "ollama/ollama:0.12.3@sha256:c622a7adec67cf5bd7fe1802b7e26aa583a955a54e91d132889301f50c3e0bd0"
+  n8n_container_image   = "n8nio/n8n:1.115.2@sha256:ca7bc6b8de1b4f0f87e66d1fee70ddeafa4cc98989c361f7ec1a6c45bec04c96"
+  model_container_image = "ollama/ollama:0.12.5@sha256:e43c26d2d1ebc726bc932166d2979086310b2f9c5ccd64fb06b55d1ea2c4f2cc"
 }
