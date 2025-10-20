@@ -4,7 +4,7 @@ module "vector_db" {
 
   database_name  = "vector"
   engine         = "aurora-postgresql"
-  engine_version = "16.6"
+  engine_version = "16.8"
   instances      = 1
   instance_class = "db.serverless"
   username       = var.vector_db_username
