@@ -96,7 +96,7 @@ locals {
 }
 
 module "n8n_ecs" {
-  source = "github.com/cds-snc/terraform-modules//ecs?ref=v10.9.0"
+  source = "github.com/cds-snc/terraform-modules//ecs?ref=v10.9.1"
 
   cluster_capacity_provider = "FARGATE_SPOT"
   cluster_name              = "n8n"
@@ -156,7 +156,7 @@ module "n8n_ecs" {
 module "model_ecs" {
   count = 0 # Remove for now as the testing is complete
 
-  source = "github.com/cds-snc/terraform-modules//ecs?ref=v10.9.0"
+  source = "github.com/cds-snc/terraform-modules//ecs?ref=v10.9.1"
 
   create_cluster   = false
   cluster_name     = "n8n"
