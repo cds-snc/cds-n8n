@@ -1,5 +1,5 @@
 module "vector_db" {
-  source = "github.com/cds-snc/terraform-modules//rds?ref=v10.9.0"
+  source = "github.com/cds-snc/terraform-modules//rds?ref=v10.9.1"
   name   = "vector-${var.env}"
 
   database_name  = "vector"

@@ -19,7 +19,7 @@ resource "aws_route53_record" "n8n_A" {
 # Add a DNS resolver firewall to limit outbound DNS queries
 #
 module "resolver_dns" {
-  source           = "github.com/cds-snc/terraform-modules//resolver_dns?ref=v10.9.0"
+  source           = "github.com/cds-snc/terraform-modules//resolver_dns?ref=v10.9.1"
   vpc_id           = module.vpc.vpc_id
   firewall_enabled = true
 
