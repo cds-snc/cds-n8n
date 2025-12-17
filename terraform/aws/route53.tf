@@ -25,6 +25,7 @@ module "resolver_dns" {
 
   allowed_domains = [
     "*.amazonaws.com.",         # AWS
+    "*.compute.internal.",      # AWS
     "*.azure.com.",             # Azure OpenAI
     "*.azure-api.net.",         # Azure OpenAI
     "canada.ca.",               # Government of Canada
@@ -40,6 +41,7 @@ module "resolver_dns" {
     "tiktoken.pages.dev.",      # OpenAI token counting
     "*.docker.com.",            # Docker Hub
     "*.docker.io.",             # Docker Hub
+    "auth.docker.io.cdn.cloudflare.net.", # Docker Hub
     "*.n8n.ecs.local.",         # Service discovery for n8n
   ]
 
