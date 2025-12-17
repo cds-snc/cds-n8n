@@ -52,3 +52,7 @@ jobs:
       - name: Apply Terraform
         working-directory: terraform/env/staging
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Wait for ECS services to stabilize
+        run: |
+          aws ecs wait services-stable --cluster n8n --services n8n --region $AWS_REGION
